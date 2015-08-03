@@ -1,0 +1,271 @@
+package protein.comparator;
+
+/*
+ * @author Mike Carbone
+ */
+
+public class ProteinComparator {
+        ProteinComparator()
+        {
+            System.out.println("Put the sequence in.");
+        }
+        
+        ProteinComparator(String sequence)
+        {
+            this.sequence = sequence;
+        }
+        // String for primary structure
+        String sequence;
+        // create the String arrays to hold our secondary structures
+        String[] a_helices = new String[10];
+        String[] beta_sheets = new String[10];
+        String[] random_coils = new String[10];
+        
+        // parse our sequence into seperate secondary structures
+        public void parse_Sequence()
+        {
+            // keep track of which structure we are at
+            int a_count = 0;
+            int b_count = 0;
+            int c_count = 0;
+            
+            // initialize all of our Strings
+            for(int i = 0; i < a_helices.length; i++)
+            {
+                a_helices[i] = "";
+            }
+            for(int i = 0; i < beta_sheets.length; i++)
+            {
+                beta_sheets[i] = "";
+            }
+            for(int i = 0; i < random_coils.length; i++)
+            {
+                random_coils[i] = "";
+            }
+            
+            // go through the sequence one amino acid at a time
+            for(int i = 0; i < sequence.length(); i++)
+            {
+                // if we have a secondary structure signifier 0 (alpha helix)
+                try
+                {
+                    if(sequence.charAt(i) == '0')
+                    {
+                        // copy everything up to the next whitespace to alpha helix
+                        for(int j = i+1; sequence.charAt(j) != ' '; j++)
+                        {
+                            a_helices[a_count] += sequence.charAt(j);
+                        }
+                        a_count++;
+                    }
+                }
+                catch (java.lang.IndexOutOfBoundsException e)
+                {
+
+                }
+                // if we have a secondary structure signifier of 1 (beta sheet)
+                try
+                {
+                    if(sequence.charAt(i) == '1')
+                    {
+                        // copy everything up to the next whitespace to beta sheet
+                        for(int j = i+1; sequence.charAt(j) != ' '; j++)
+                        {
+                            beta_sheets[b_count] += sequence.charAt(j);
+                        }
+                        b_count++;
+                    }
+                }
+                catch (java.lang.IndexOutOfBoundsException e)
+                {
+
+                }
+                // if we have a secondary structure signifier of 2 (random coil)
+                try
+                {
+                    if(sequence.charAt(i) == '2')
+                    {
+                        // copy everything up to the next whitespace to random coil
+                        for(int j = i+1; sequence.charAt(j) != ' '; j++)
+                        {
+                            random_coils[c_count] += sequence.charAt(j);
+                        }
+                        c_count++;
+                    }
+                }
+                catch (java.lang.IndexOutOfBoundsException e)
+                {
+
+                }
+            }
+        }
+        
+        public int compare(ProteinComparator protein_1)
+        {
+            int total_matches = 0;
+            int a_matches = 0;
+            int b_matches = 0;
+            int c_matches = 0;
+            
+            // go through each alpha helix
+            try
+            {
+                for(int i = 0; i < this.a_helices.length; i++)
+                {
+                    // go through each amino acid in the current alpha helix
+                    for(int j = 0; j < (this.min_a_length(protein_1, i)).a_helices[i].length(); j++)
+                    {
+                        // check if the amino acid in alpha helix of protein 1 == amino acid in alpha helix of protein 2
+                        if(this.a_helices[i].charAt(j) == protein_1.a_helices[i].charAt(j))
+                        {
+                            // if they are equal, incriment a_matches
+                            a_matches++;
+                        }
+                    }
+                }
+            }
+            catch(java.lang.NullPointerException|java.lang.StringIndexOutOfBoundsException e)
+            {
+                
+            }
+            
+            // go through each beta sheet
+            try
+            {
+                for(int i = 0; i < this.beta_sheets.length; i++)
+                {
+                    // go through each amino acid in the current beta sheet
+                    for(int j = 0; j < (this.min_a_length(protein_1, i)).beta_sheets[i].length(); j++)
+                    {
+                        // check if the amino acid in beta sheet of protein 1 == amino acid in beta sheet of protein 2
+                        if(this.beta_sheets[i].charAt(j) == protein_1.beta_sheets[i].charAt(j))
+                        {
+                            // if they are equal, incriment b_matches
+                            b_matches++;
+                        }
+                    }
+                }
+            }
+            catch(java.lang.NullPointerException|java.lang.StringIndexOutOfBoundsException e)
+            {
+            
+            }
+            
+            // go through each random coil
+            try
+            {
+                for(int i = 0; i < this.random_coils.length; i++)
+                {
+                    // go through each amino acid in the current random coil
+                    for(int j = 0; j < (this.min_a_length(protein_1, i)).random_coils[i].length(); j++)
+                    {
+                        // check if the amino acid in random coil of protein 1 == amino acid in random coil of protein 2
+                        if(this.random_coils[i].charAt(j) == protein_1.random_coils[i].charAt(j))
+                        {
+                            // if they are equal, incriment c_matches
+                            c_matches++;
+                        }
+                    }
+                }
+            }
+            catch(java.lang.NullPointerException|java.lang.StringIndexOutOfBoundsException e)
+            {
+                
+            }
+            
+            total_matches = a_matches + b_matches + c_matches;
+            return total_matches;
+            
+        }
+
+        // find the smaller length of the two alpha helices (prevent OutOfBounds)
+        ProteinComparator min_a_length(ProteinComparator protein_1, int index)
+        {
+            if(this.a_helices[index].length() < protein_1.a_helices[index].length())
+            {
+                return this;
+            }
+            else
+                return protein_1;
+        }
+        // find the smaller length of the two beta sheets (prevent OutOfBounds)
+        ProteinComparator min_b_length(ProteinComparator protein_1, int index)
+        {
+            if(this.beta_sheets[index].length() < protein_1.beta_sheets[index].length())
+            {
+                return this;
+            }
+            else
+                return protein_1;
+        }
+        // find the smaller length of the two random coils (prevent OutOfBounds)
+        ProteinComparator min_c_length(ProteinComparator protein_1, int index)
+        {
+            if(this.random_coils[index].length() < protein_1.random_coils[index].length())
+            {
+                return this;
+            }
+            else
+                return protein_1;
+        }
+        
+        // print output
+        public static void print_Output(ProteinComparator pyrin, ProteinComparator death_domain, ProteinComparator death_effector, ProteinComparator card)
+        {
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        
+        System.out.println("Amino acid matches:");
+        System.out.println("________________________________________________________________|");
+        System.out.println("|                | Pyrin | Death Domain | Death Effector | CARD |");
+        System.out.println("| Pyrin          |   X   |      " + pyrin.compare(death_domain) + "       |       " + pyrin.compare(death_effector) + "        |  " + pyrin.compare(card) + "   |");
+        System.out.println("| Death Domain   |   " + death_domain.compare(pyrin) + "   |      X       |       " + death_domain.compare(death_effector) + "        |  " + death_domain.compare(card) + "   |");
+        System.out.println("| Death Effector |   " + death_effector.compare(pyrin) + "   |      " + death_effector.compare(death_domain) + "       |       X        |  " +  + death_effector.compare(card) + "   |");
+        System.out.println("| CARD           |   " + card.compare(pyrin) + "   |      " + card.compare(death_domain) + "       |       "    + card.compare(death_effector) + "        |  X   |");
+        System.out.println("|_______________________________________________________________|");
+        
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        }
+
+        
+    public static void main(String[] args) {
+        
+        // create our 4 protein domains
+        ProteinComparator card = new ProteinComparator("2MEARD 0KQVLRSLRLELGA 2EVLVEGLVL 0QYLYQE 2GILTE 0NHIQEI 2NAQTTG 0LRKTMLLLDI 2LPSRGPKA 0FDTFLDS 2LQE 0WVREKLKKAREE 2AMTDLPAG");
+        card.parse_Sequence();
+        
+        ProteinComparator death_domain = new ProteinComparator("2P 0QQQQEEVQRLLM 2MGEPAK 0GWQELAGHLG 2YQ 0AEAVETMA 2CDQ 0MPAYTLLRNW 2AAQEGNRATL 0RVLEDALAA 2IG 0REDVVQVLS 2SPAESSSVV");
+        death_domain.parse_Sequence();
+        
+        ProteinComparator death_effector = new ProteinComparator("2M 0AEYGTLLQDLTNN 2IT 0LEDLEQLKSA 2CKEDIP 0SEKSE 2EITT 0GSAWFSFLES 2HNKLDKDNL 0SYIEHIFEI 2SRR 0PDLLTMVVDYRTRVLKI 2S");
+        death_effector.parse_Sequence();
+        
+        ProteinComparator pyrin = new ProteinComparator("0MGRARDAILDALEN 1LTA 0EELKKFKLKL 2LSVPLREGYGRIP 0RGALLS 1MDA 0LDLTDKLVS 2FYL 0ETYGAELTANVLRDM 2GLQ 0EMAGQLQAATHQ");
+        pyrin.parse_Sequence();
+        
+        // make our comparisons
+        System.out.println("CARD and Death domain have " + card.compare(death_domain) + " matches.");
+        System.out.println("CARD and Death effector have " + card.compare(death_effector) + " matches.");
+        System.out.println("card and pyrin have " + card.compare(pyrin) + " matches.");
+        
+        System.out.println("Death domain and CARD have " + death_domain.compare(card) + " matches.");
+        System.out.println("Death domain and Death effector have " + death_domain.compare(death_effector) + " matches.");
+        System.out.println("DEATH DOMAIN and pyrin have " + death_domain.compare(pyrin) + " matches.");
+        
+        System.out.println("Death effector and CARD have " + death_effector.compare(card) + " matches.");
+        System.out.println("Death effector and Death domain have " + death_effector.compare(death_domain) + " matches.");
+        System.out.println("Death effector and pyrin have " + death_effector.compare(pyrin) + " matches.");
+        
+        System.out.println("Pyrin and CARD have " + pyrin.compare(card) + " matches.");
+        System.out.println("Pyrin and Death domain have " + pyrin.compare(death_domain) + " matches.");
+        System.out.println("Pyrin and Death effector have " + pyrin.compare(death_effector) + " matches.");
+        
+        print_Output(pyrin, death_domain, death_effector, card);
+        
+        
+    }
+    
+}
